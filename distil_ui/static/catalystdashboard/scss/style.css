@@ -1,0 +1,44 @@
+#line_chart .nv-lineChart circle.nv-point {
+    fill-opacity: 1;
+}
+
+#line_chart .nvd3 .nv-legend .nv-series {
+    cursor:default;
+}
+
+.form-horizontal label {
+    display: inline;
+    margin-bottom: 0;
+    margin-right: 5px;
+    font-weight: normal;
+}
+
+.pie {
+    width:100%;
+    height:360px
+}
+
+.line {
+    width:100%;
+    height:360px;
+}
+
+#billing .total {
+    font-size: 14px;
+    font-weight:bold;
+}
+
+.dot_line {
+    padding-bottom: 6px;
+    border-bottom: thin dotted #666;
+}
+
+@media screen and (max-width: 1025px) {
+    .row-fluid > [class*="span"] {
+        width:100% !important;
+    }
+
+    body {
+        min-width: 700px;
+    }
+}

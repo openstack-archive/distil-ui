@@ -1,0 +1,3 @@
+{% load i18n %}{% trans "Bill Report For Period" %}:,{{ billing.start|date:"b. d Y" }},{{ billing.end|date:"b. d Y" }}
+{% trans "Project ID" %}:,{{ billing.project_id }}
+

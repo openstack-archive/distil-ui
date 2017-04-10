@@ -20,5 +20,5 @@ import horizon
 class Default(horizon.Panel):
     name = _("Default")
     slug = 'default'
-    urls = 'openstack_dashboard.contrib.management.tickets.urls'
+    urls = 'distil_ui.content.billing.urls'
     nav = False

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 PANEL = 'billing'
-PANEL_GROUP = 'default'
+PANEL_GROUP = 'billing'
 PANEL_DASHBOARD = 'management'
 
 ADD_PANEL = ('distil_ui.content.billing.panel.Billing')

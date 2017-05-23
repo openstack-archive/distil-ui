@@ -172,7 +172,7 @@
                     var row_class = i%2==0? 'odd':'even';
                     var link = "#";
                     if (resource_type in link_mapping){
-	                    link = "http://127.0.0.1:9977/project" + link_mapping[resource_type] + res_cost_details[i]['resource_id'];
+                        link = "/project" + link_mapping[resource_type] + res_cost_details[i]['resource_id'];
 	                }
 	                if (resource_type == 'Network'){
 	                    link += '/detail';

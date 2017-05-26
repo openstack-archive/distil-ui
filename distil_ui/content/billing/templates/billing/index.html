@@ -172,11 +172,11 @@
                     var row_class = i%2==0? 'odd':'even';
                     var link = "#";
                     if (resource_type in link_mapping){
-	                    link = "http://127.0.0.1:9977/project" + link_mapping[resource_type] + res_cost_details[i]['resource_id'];
-	                }
-	                if (resource_type == 'Network'){
-	                    link += '/detail';
-	                }
+                        link = "/project" + link_mapping[resource_type] + res_cost_details[i]['resource_id'];
+                    }
+                    if (resource_type == 'Network'){
+                        link += '/detail';
+                    }
 
                     $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource']+'</td><td>'+res_cost_details[i]['volume']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
                 }

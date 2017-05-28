@@ -106,7 +106,7 @@ def distilclient(request):
         distil.request = request
     except Exception as e:
         LOG.error(e)
-        return
+        raise e
     return distil
 
 

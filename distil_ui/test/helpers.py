@@ -15,6 +15,3 @@ from openstack_dashboard.test import helpers
 
 class APITestCase(helpers.APITestCase):
     """Extends the base Horizon APITestCase for distilclient"""
-
-    def setUp(self):
-        super(APITestCase, self).setUp()

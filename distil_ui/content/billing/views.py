@@ -58,7 +58,7 @@ class IndexView(horizon_tables.DataTableView):
         return "text/html"
 
     def get_data(self):
-        try:
+        #try:
             project_id = self.kwargs.get('project_id',
                                          self.request.user.tenant_id)
             self.billing = base.BaseBilling(self.request, project_id)
@@ -70,9 +70,9 @@ class IndexView(horizon_tables.DataTableView):
             self.kwargs['current_month'] = self.history[-1][1]
             self.kwargs['history'] = self.history
             return self.history[-1][1]
-        except Exception:
-            exceptions.handle(self.request, _('Unable to get usage cost.'))
-            return []
+        #except Exception:
+        #    exceptions.handle(self.request, _('Unable to get usage cost.'))
+        #    return []
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)

@@ -17,5 +17,4 @@ from django.conf.urls import url  # noqa
 from distil_ui.content.billing import views
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='index'),
-]
+    url(r'^$', views.IndexView.as_view(), name='index')]

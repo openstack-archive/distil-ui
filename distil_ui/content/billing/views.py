@@ -14,6 +14,7 @@
 
 import datetime
 import json
+import logging
 
 from django.template import defaultfilters
 from django.utils.translation import ugettext_lazy as _
@@ -21,9 +22,11 @@ from horizon import exceptions
 from horizon import tables as horizon_tables
 from horizon.utils import csvbase
 
-from distil_ui.api import distil
+from distil_ui.api import distil_v2 as distil
 from distil_ui.content.billing import base
 from distil_ui.content.billing import tables
+
+LOG = logging.getLogger(__name__)
 
 
 class IndexCsvRenderer(csvbase.BaseCsvResponse):
@@ -64,40 +67,52 @@ class IndexView(horizon_tables.DataTableView):
             self.billing = base.BaseBilling(self.request, project_id)
             self.start, self.end = self.billing.get_date_range()
             distil_client = distil.distilclient(self.request)
-            self.history = (distil.get_cost(self.request, distil_client))
-
+            self.cost = distil.get_cost(self.request, distil_client)
+            self.credits = distil.get_credits(self.request, distil_client)
             self.kwargs['billing'] = self.billing
-            self.kwargs['current_month'] = self.history[-1][1]
-            self.kwargs['history'] = self.history
-            return self.history[-1][1]
-        except Exception:
+            self.kwargs['cost'] = self.cost
+            return self.cost[-1]
+        except Exception as e:
+            LOG.exception(e)
             exceptions.handle(self.request, _('Unable to get usage cost.'))
+            self.kwargs['billing'] = None
+            self.kwargs['history'] = [{} for i in range(12)]
             return []
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['table'].kwargs['billing'] = self.billing
-        context['form'] = self.billing.form
-        context['billing'] = self.billing
-        context['current_month'] = self.history[-1][1]
-        pie_data = [{"value": b.cost, "key": b.resource}
-                    for b in self.history[-1][1] if b.cost >= 0]
-        line_data = [{"values": [{"y": m[0], "x": i}
-                                 for i, m in enumerate(self.history)],
-                      "method": "Square Root Choice", "key": "Cost"}]
-        chart_data = {'pie': pie_data, 'line': line_data}
-        context['chart_data'] = json.dumps(chart_data)
-        context['amount_cost'] = self.history[-1][0]
-        context['cost_details'] = json.dumps(self.history[-1][2])
-        context['x_axis_line_chart'] = self._get_x_axis_for_line_chart()
+        try:
+            context['form'] = self.billing.form
+            context['billing'] = self.billing
+            pie_data = []
+            for i in range(len(self.cost)):
+                pie_data.append([{"value": value, "key": key} for (key, value)
+                                 in self.cost[i]["breakdown"].items()])
+            avg_cost = sum([m["total_cost"] for m in self.cost[:11]]) / 11.0
+            line_data = [{"values": [{"y": m["total_cost"], "x": i,
+                                      "p": m["status"]} for i, m
+                                     in enumerate(self.cost)], "key": "Cost"},
+                         {"values": [{"y": avg_cost, "x": i}
+                                     for i in range(12)],
+                          "key": "Avg Cost", "color": "#fdd0a2"}]
+
+            context['line_chart_data'] = json.dumps(line_data)
+            context['pie_chart_data'] = json.dumps(pie_data)
+            context['month_details'] = json.dumps([d["details"] for d
+                                                   in self.cost])
+            context['x_axis_line_chart'] = self._get_x_axis_for_line_chart()
+            context['credits'] = json.dumps(self.credits)
+        except Exception as e:
+            LOG.exception(e)
         return context
 
     def _get_x_axis_for_line_chart(self):
         today = datetime.date.today()
-        ordered_month = ['Jan ' + str(today.year), 'Feb', 'Mar', "Apr", 'May',
-                         'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        ordered_month = ['Jan ', 'Feb ', 'Mar ', "Apr ", 'May ', 'Jun ',
+                         'Jul ', 'Aug ', 'Sep ', 'Oct ', 'Nov ', 'Dec ']
 
-        return ordered_month[today.month:] + ordered_month[:today.month]
+        return ([m + str(today.year - 1) for m in ordered_month[today.month:]]
+                + [m + str(today.year) for m in ordered_month[:today.month]])
 
     def render_to_response(self, context, **response_kwargs):
         if self.request.GET.get('format', 'html') == 'csv':

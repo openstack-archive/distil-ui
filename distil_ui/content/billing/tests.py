@@ -118,30 +118,6 @@ class BaseBillingTests(test.TestCase):
     def test_get_billing_list(self):
         self.assertEqual(self.billing.get_billing_list(None, None), [])
 
-    def test_csv_link(self):
-        start = self.billing.today.strftime("%Y-%m-%d")
-        end = self.billing.today.strftime("%Y-%m-%d")
-        link = "?start={0}&end={1}&format=csv".format(start, end)
-        self.assertEqual(self.billing.csv_link(), link)
-
-
-class IndexCsvRendererTest(test.TestCase):
-    def setUp(self):
-        super(IndexCsvRendererTest, self).setUp()
-        request = FakeRequest()
-        template = ""
-        context = {"current_month": [BILLITEM(id=1, resource='N/A',
-                                              count=1, cost=2)]}
-        content_type = "text/csv"
-        self.csvRenderer = views.IndexCsvRenderer(request=request,
-                                                  template=template,
-                                                  context=context,
-                                                  content_type=content_type)
-
-    def test_get_row_data(self):
-        data = list(self.csvRenderer.get_row_data())
-        self.assertEqual(data, [('N/A', 1, u'2.00')])
-
 
 class ViewsTests(test.TestCase):
     def setUp(self):
@@ -151,26 +127,7 @@ class ViewsTests(test.TestCase):
         self.view.request = FakeRequest()
         self.view.billing = base.BaseBilling(self.request, project_id)
 
-    def test_get_template_names(self):
-        self.assertEqual(self.view.get_template_names(),
-                         "management/billing/billing.csv")
-
-    def test_get_content_type(self):
-        self.assertEqual(self.view.get_content_type(), "text/csv")
-
-    def test_get_data(self):
-        # TODO(flwang): Will add in next patch
-        pass
-
     @mock.patch('horizon.tables.DataTableView.get_context_data')
     def test_get_context_data(self, mock_get_context_data):
         # TODO(flwang): Will add in next patch
         pass
-
-    def test_render_to_response(self):
-        self.view.start = datetime.datetime.now()
-        self.view.end = datetime.datetime.now()
-        context = {"current_month": [BILLITEM(id=1, resource='N/A',
-                                              count=1, cost=2)]}
-        self.assertIsInstance(self.view.render_to_response(context),
-                              views.IndexCsvRenderer)

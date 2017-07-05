@@ -105,6 +105,7 @@ def distilclient(request):
                                os_cacert=cacert)
         distil.request = request
     except Exception as e:
+        print(e)
         LOG.error(e)
         return
     return distil

@@ -14,13 +14,12 @@
 }
 
 .pie {
-    width:100%;
-    height:360px
+    height:500px;
 }
 
 .line {
     width:100%;
-    height:360px;
+    height:200px;
 }
 
 #billing .total {

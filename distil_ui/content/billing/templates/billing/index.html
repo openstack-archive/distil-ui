@@ -18,103 +18,116 @@
 
 {% block main %}
 
-<p>Disclaimer: This is an estimate for your usage within the current region, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
+<p>Disclaimer: This is an estimate for your usage cross <b>ALL regions</b>, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
 
 <div class="row-fluid">
-    <div class="col-md-4">
-        <h3 class="quota-heading dot_line">{% trans "Month to date" %}</h3>
-        <div id="pie_chart">
-            <svg class="pie"></svg>
-        </div>
-
-        {{table.render}}
+    <div id="credits_div" class="list-group">
+       <h4 class="quota-heading dot_line">{% trans "Credits" %}</h4>
+       <ul id="credits_list" class="fa-ul" style="margin-left: 1.7em">
+       </ul>
     </div>
-
-    <div class="col-md-8">
-      <h3 class="quota-heading dot_line">{% trans "Usage cost history" %}</h3>
-      <!-- Remove the date range for now
-      <form action="?" method="get" id="date_form" class="form-horizontal">
-        <h3>{% trans "Select a period of time to query its cost" %}: </h3>
-        <div class="datepicker">
-            {% blocktrans with start=form.start %}
-            <label>From:</label>{{ start }}{% endblocktrans %}
-
-            {% blocktrans with end=form.end %}
-            <label>To:</label>{{ end }}{% endblocktrans %}
-            <button class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
-            <small>{% trans "The date should be in YYYY-mm-dd format." %}</small>
+    <div>
+        <h4 class="quota-heading dot_line">{% trans "Usage Cost History" %}
+        </h4>
+        <div id="line_chart">
+            <svg class="line"></svg>
         </div>
-      </form>
-      -->
+    </div>
+    
+    <div>
+	    <h4 id="monthly_title" class="quota-heading dot_line">{% trans "Monthly Cost Break Down" %}</h4>
+	    <div class="col-md-4" style="padding:0px;">
+		    <div id="pie_chart">
+		       <select id="month_select" class="form-control" style="width:95%;"></select>
+		       <svg class="pie"></svg>
+		    </div>
+        </div>
+	    <div class="col-md-8" style="padding:0px;">
+			<table id="month_details" class="table table-striped">
+		        <thead>
+		            <tr>
+		                <th>Product Name</th>
+		                <th>Resource Name/ID</th>
+		                <th>Quantity</th>
+		                <th>Unit</th>
+		                <th>Rate</th>
+		                <th>Cost</th>
+		            </tr>
+		        </thead>
+		        <tfoot>
+		            <tr>
+		                <th>Product Name</th>
+		                <th>Resource Name/ID</th>
+		                <th>Quantity</th>
+		                <th>Unit</th>
+		                <th>Rate</th>
+		                <th>Cost</th>
+		            </tr>
+		        </tfoot>
+		        <tbody>
 
-      <div id="line_chart">
-        <svg class="line"></svg>
-      </div>
-      <table id="service_details" class="table table-striped datatable  tablesorter tablesorter-default">
-         <thead>
-           <tr class="table_caption">
-             <th data-column="0" class="table_header" colspan="6">
-               <h3 class="table_title">Usage Details</h3>
-             </th>
-           </tr>
-           <tr class="tablesorter-headerRow">
-            <th tabindex="0" data-column="0" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource ID</div></th>
-            <th tabindex="0" data-column="1" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource Name</div></th>
-            <th tabindex="0" data-column="2" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Volume</div></th>
-            <th tabindex="0" data-column="3" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Unit</div></th>
-            <th tabindex="0" data-column="4" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Rate</div></th>
-            <th tabindex="0" data-column="5" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Cost</div></th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+		        </tbody>
+		    </table>
+	    </div>
     </div>
 </div>
 
 <!-- Current d3 version is 3.4.1 -->
 <script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/d3.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/nv.d3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/jquery.simplePagination.js" charset="utf-8"></script>
 <script type="text/javascript">
-    var CHART_DATA = {{chart_data | safe}};
-    var AMOUNT_COST = {{amount_cost | safe}};
-    var COST_DETAILS = {{cost_details | safe}};
+    var LINE_CHART_DATA = {{line_chart_data | safe}};
+    var PIE_CHART_DATA = {{pie_chart_data | safe}};
+    var MONTH_DETAILS = {{month_details | safe}};
+    var MONTHS = {{x_axis_line_chart | safe}};
+    var CREDITS = {{credits | safe}};
 
     function draw_pie(where, source){
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.value })
-                .showLabels(true)
-                .labelType("percent")
-                .labelThreshold(.05)
-                .donut(true)
-                .donutRatio(0.35);
-
-            chart.tooltipContent(function(k, v, graph) {
-                return '<h3>' + k + '</h3>' + '<span style=\'padding:8px\'>$' + v + '</span>'
-            });
-
-            d3.select(where)
-                .datum(source)
-                .transition().duration(1200)
-                .call(chart);
-
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        });
+        var h = 500;
+		var r = h/2;
+		var arc = d3.svg.arc().outerRadius(r) /2 ;
+		nv.addGraph(function() {
+		    var chart = nv.models.pieChart()
+		        .x(function(d) { return d.key })
+		        .y(function(d) { return d.value })
+		        .margin({left: 0, right: 50})
+		        .showLabels(true)
+		        .labelType("percent")
+		        .labelThreshold(.05)
+		        .donut(true).donutRatio(0.35);
+		    d3.select("#pie_chart svg")
+		        .datum(source)
+		        .transition().duration(1200)
+		        .call(chart);
+		    return chart;
+		});
     }
 
     function draw_line(where, source){
         nv.addGraph(function() {
-            var months = {{x_axis_line_chart | safe}};
+            d3.select(source).remove();
             var chart = nv.models.lineChart()
-                .margin({left: 75})
-                .size(70);
+                .margin({left: 75, right: 50})
+                .size(100);
 
             chart.tooltipContent(function(key, x, y, graph) {
-                return '<h3>' + key + '</h3>' + '<span style=\'padding:8px\'>$' + y + ' at ' + x + '</span>'
+                pay_status = "";
+                if (key == "Cost"){
+	                status = LINE_CHART_DATA[0].values[MONTHS.indexOf(x)].p;
+	                pay_status = "<br/>which is a quotation";
+					switch(status) {
+					    case "paid":
+					        pay_status = "<br/>which has been paid";
+					        break;
+					    case "open":
+					        pay_status = '<br/>which has <strong style="color: #E6550D;">NOT</strong> been paid';
+					        break;
+					    default:
+					        text = "<br/>which is a quotation";
+					}
+				}
+                return '<h3>' + key + '</h3>' + '<span style=\'padding:8px\'>$' + y + ' at ' + x + pay_status + '</span>'
             });
 
             chart.legend
@@ -122,15 +135,47 @@
 
             chart.xAxis.axisLabel("Cost per Month")
                 .tickValues([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-                .tickFormat(function(m){return months[m]});
+                .tickFormat(function(m){return MONTHS[m]});
 
             chart.yAxis
                 .axisLabel("Cost (NZD) excl. GST")
                 .tickFormat(d3.format(',.2f'));
-
+            d3.select(where).select('.nv-interactive').selectAll("circle").remove();
             d3.select(where)
                 .datum(source)
-                .call(chart);
+                .transition()
+                .duration(500)
+                .call(chart)
+                .each("end", function(){
+                    var svg = d3.select(this);
+                    var data = LINE_CHART_DATA;
+		            var unpaid = svg.select('.nv-interactive').selectAll("circle")
+			            .data(data[0].values.filter(function (d) {
+			            return d.p == 'open';
+			        }))
+			            .enter().append("circle")
+			            .attr("class", "unpaid")
+			            .style("fill", "#E6550D")
+			            .attr("r", 6)
+			            .attr("cx", function(d) {
+			            return chart.xAxis.scale()(d.x);
+			        })
+			            .attr("cy", function(d) {
+			            return chart.yAxis.scale()(d.y);
+			        });
+			        //    .on("click", function(d) {
+			        //        showMonthlyCost(d["x"]);
+			        //});
+
+                    current_month = LINE_CHART_DATA[0].values[11];
+		            var current = svg.select('.nv-interactive')
+			            .append("circle")
+			            .attr("class", "mycircle")
+			            .style("fill", "#31A354")
+			            .attr("r", 6)
+			            .attr("cx", function(d) {return chart.xAxis.scale()(current_month.x);})
+			            .attr("cy", function(d) {return chart.yAxis.scale()(current_month.y);});
+                });
 
             nv.utils.windowResize(chart.update);
 
@@ -138,51 +183,64 @@
         });
     }
 
-    $(document).ready(function(){
+
+    function showMonthlyCost(monthIndex){
+       // Build the details table
+        $('#month_details tbody').empty();
+        month_detail = MONTH_DETAILS[monthIndex]
+        for(i = 0; i < month_detail.length; i++) {
+            resource_id = month_detail[i]['resource_id'] != null ? " (" + month_detail[i]['resource_id']+")" : ""
+            resource = resource_id == ""? month_detail[i]['resource_name']+resource_id : '<a>'+month_detail[i]['resource_name']+resource_id+'</a>'
+            $('#month_details tbody').append('<tr><td>' + month_detail[i]['product'] + '</td><td>' + resource +'</td><td>'+month_detail[i]['quantity']+'</td><td>'+month_detail[i]['unit']+'</td><td>'+month_detail[i]['rate']+'</td><td>$'+month_detail[i]['cost']+'</td></tr>');
+        }
+
+        $("#month_details").simplePagination({
+            perPage: 10,
+            previousButtonClass: "btn btn-default",
+            nextButtonClass: "btn btn-default"
+        });
+
+        // Refresh the pie chart
         draw_pie("#pie_chart .pie", function(){
-            return CHART_DATA['pie'];
-        })
+            return PIE_CHART_DATA[monthIndex];
+        });
+    }
+
+    $(document).ready(function(){
+        // FIXME(flwang): Need a better way to fix this
+        $('li.active').html('Usage Costs');
+        //$('.page-header').hide();
 
         draw_line("#line_chart .line", function(){
-            return CHART_DATA['line'];
-        })
-
-        $('#id_start').attr('disabled', true);
-        $('#billing tbody tr').each(function(){
-            $(this).find("td").eq(2).html('$' + $(this).find("td").eq(2).html());
+            return LINE_CHART_DATA;
         });
-        $('#billing tfoot td').attr('colspan', 2);
-        $('#billing tfoot>tr').append('<td><span class="total">$'+AMOUNT_COST+'</span></td>');
 
-        var link_mapping = {"Compute": "/instances/",
-                            "Image": "/images/",
-                            "Network": "/networks/",
-                            "Router": "/routers/",
-                            "Block Storage": "/volumes/",
-                            "VPN": "/vpn/vpnservice/"}
-        $("#billing tbody>tr a")
-          .click(function() {
-            var resource_type = $(this).html();
-            res_cost_details = COST_DETAILS[resource_type]
-             $('#service_details .table_title').html(resource_type + ' - Usage Details')
-            $('#service_details').show();
-            $('#service_details tbody').html('');
-            if (res_cost_details.length>0){
-                for (i = 0; i < res_cost_details.length; i++) {
-                    var row_class = i%2==0? 'odd':'even';
-                    var link = "#";
-                    if (resource_type in link_mapping){
-                        link = "/project" + link_mapping[resource_type] + res_cost_details[i]['resource_id'];
-                    }
-                    if (resource_type == 'Network'){
-                        link += '/detail';
-                    }
+        $(window).resize(function(){
+	        draw_line("#line_chart .line", function(){
+	            return LINE_CHART_DATA;
+	        });
+        });
 
-                    $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource']+'</td><td>'+res_cost_details[i]['volume']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
-                }
+        for(i = MONTHS.length -1 ; i >= 0; i--) {
+            amount = LINE_CHART_DATA[0].values[i]["y"]
+            $("#month_select").append('<option value="'+ i.toString() +'">'+MONTHS[i] + ': $' + amount +'</option>');
+        }
+        $("#month_select").change(function (e) {
+            var optionSelected = $("option:selected", this);
+            var valueSelected = this.value;
+            showMonthlyCost(this.value);
+		});
+
+        showMonthlyCost(11);
+
+        if (CREDITS["credits"].length == 0) {
+            $("#credits_div").hide();
+        } else {
+             $("#credits_div").show();
+            for(i=0;i<CREDITS["credits"].length;i++){
+                $("#credits_list").append('<li><i class="fa-li fa fa-credit-card"></i> Balance of ' + CREDITS["credits"][i].type + ' is $' + CREDITS["credits"][i].balance + ' will expired at ' + CREDITS["credits"][i].expiry_date + '</li>');
             }
-          })
-        $('#service_details').hide();
+        }
     });
 
 </script>

@@ -12,106 +12,565 @@
     <link href='{{ STATIC_URL }}catalystdashboard/scss/style.css' type='text/css' rel='stylesheet'>
 {% endblock %}
 
-{% block page_header %}
-  {% include "horizon/common/_page_header.html" with title=_("Usage Costs") %}
-{% endblock page_header %}
-
 {% block main %}
 
-<p>Disclaimer: This is an estimate for your usage within the current region, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
+<p>Disclaimer: This is an estimate for your usage cross <b>ALL regions</b>, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
 
 <div class="row-fluid">
-    <div class="col-md-4">
-        <h3 class="quota-heading dot_line">{% trans "Month to date" %}</h3>
-        <div id="pie_chart">
-            <svg class="pie"></svg>
-        </div>
-
-        {{table.render}}
+    <div style="padding-bottom: 20px">
+       <h4 class="quota-heading dot_line">{% trans "Credits" %}</h4>
+       Balance of Credits: $<span>198.73</span>
     </div>
-
-    <div class="col-md-8">
-      <h3 class="quota-heading dot_line">{% trans "Usage cost history" %}</h3>
-      <!-- Remove the date range for now
-      <form action="?" method="get" id="date_form" class="form-horizontal">
-        <h3>{% trans "Select a period of time to query its cost" %}: </h3>
-        <div class="datepicker">
-            {% blocktrans with start=form.start %}
-            <label>From:</label>{{ start }}{% endblocktrans %}
-
-            {% blocktrans with end=form.end %}
-            <label>To:</label>{{ end }}{% endblocktrans %}
-            <button class="btn btn-primary" type="submit">{% trans "Submit" %}</button>
-            <small>{% trans "The date should be in YYYY-mm-dd format." %}</small>
+    <div>
+        <h4 class="quota-heading dot_line">{% trans "Usage Cost History" %}</h4>
+        <div id="line_chart">
+            <svg class="line"></svg>
         </div>
-      </form>
-      -->
-
-      <div id="line_chart">
-        <svg class="line"></svg>
-      </div>
-      <table id="service_details" class="table table-striped datatable  tablesorter tablesorter-default">
-         <thead>
-           <tr class="table_caption">
-             <th data-column="0" class="table_header" colspan="6">
-               <h3 class="table_title">Usage Details</h3>
-             </th>
-           </tr>
-           <tr class="tablesorter-headerRow">
-            <th tabindex="0" data-column="0" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource ID</div></th>
-            <th tabindex="0" data-column="1" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource Name</div></th>
-            <th tabindex="0" data-column="2" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Volume</div></th>
-            <th tabindex="0" data-column="3" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Unit</div></th>
-            <th tabindex="0" data-column="4" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Rate</div></th>
-            <th tabindex="0" data-column="5" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Cost</div></th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    </div>
+    
+    <div>
+	    <h4 id="monthly_title" class="quota-heading dot_line">{% trans "Monthly Cost Break Down" %}</h4>
+	    <div class="col-md-4" style="padding:0px;">
+		    <div id="pie_chart">
+		       <svg class="pie"></svg>
+		    </div>
+        </div>
+	    <div class="col-md-8" style="padding:0px;">
+			<table id="example" class="table table-striped">
+		        <thead>
+		            <tr>
+		                <th>Region</th>
+		                <th>Resource ID</th>
+		                <th>Resource Name</th>
+		                <th>Quantity</th>
+		                <th>Unit</th>
+		                <th>Rate</th>
+		                <th>Cost</th>
+		            </tr>
+		        </thead>
+		        <tfoot>
+		            <tr>
+		                <th>Region</th>
+		                <th>Resource ID</th>
+		                <th>Resource Name</th>
+		                <th>Quantity</th>
+		                <th>Unit</th>
+		                <th>Rate</th>
+		                <th>Cost</th>
+		            </tr>
+		        </tfoot>
+		        <tbody>
+		            <tr style="display: table-row;">
+		                <td>Tiger Nixon</td>
+		                <td>System Architect</td>
+		                <td>Edinburgh</td>
+		                <td>61</td>
+		                <td>2011/04/25</td>
+		                <td>$320,800</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: table-row;">
+		                <td>Garrett Winters</td>
+		                <td>Accountant</td>
+		                <td>Tokyo</td>
+		                <td>63</td>
+		                <td>2011/07/25</td>
+		                <td>$170,750</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: table-row;">
+		                <td>Ashton Cox</td>
+		                <td>Junior Technical Author</td>
+		                <td>San Francisco</td>
+		                <td>66</td>
+		                <td>2009/01/12</td>
+		                <td>$86,000</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: table-row;">
+		                <td>Cedric Kelly</td>
+		                <td>Senior Javascript Developer</td>
+		                <td>Edinburgh</td>
+		                <td>22</td>
+		                <td>2012/03/29</td>
+		                <td>$433,060</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: table-row;">
+		                <td>Airi Satou</td>
+		                <td>Accountant</td>
+		                <td>Tokyo</td>
+		                <td>33</td>
+		                <td>2008/11/28</td>
+		                <td>$162,700</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Brielle Williamson</td>
+		                <td>Integration Specialist</td>
+		                <td>New York</td>
+		                <td>61</td>
+		                <td>2012/12/02</td>
+		                <td>$372,000</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Herrod Chandler</td>
+		                <td>Sales Assistant</td>
+		                <td>San Francisco</td>
+		                <td>59</td>
+		                <td>2012/08/06</td>
+		                <td>$137,500</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Rhona Davidson</td>
+		                <td>Integration Specialist</td>
+		                <td>Tokyo</td>
+		                <td>55</td>
+		                <td>2010/10/14</td>
+		                <td>$327,900</td>
+		                <td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Colleen Hurst</td>
+		                <td>Javascript Developer</td>
+		                <td>San Francisco</td>
+		                <td>39</td>
+		                <td>2009/09/15</td>
+		                <td>$205,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Sonya Frost</td>
+		                <td>Software Engineer</td>
+		                <td>Edinburgh</td>
+		                <td>23</td>
+		                <td>2008/12/13</td>
+		                <td>$103,600</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jena Gaines</td>
+		                <td>Office Manager</td>
+		                <td>London</td>
+		                <td>30</td>
+		                <td>2008/12/19</td>
+		                <td>$90,560</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Quinn Flynn</td>
+		                <td>Support Lead</td>
+		                <td>Edinburgh</td>
+		                <td>22</td>
+		                <td>2013/03/03</td>
+		                <td>$342,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Charde Marshall</td>
+		                <td>Regional Director</td>
+		                <td>San Francisco</td>
+		                <td>36</td>
+		                <td>2008/10/16</td>
+		                <td>$470,600</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Haley Kennedy</td>
+		                <td>Senior Marketing Designer</td>
+		                <td>London</td>
+		                <td>43</td>
+		                <td>2012/12/18</td>
+		                <td>$313,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Tatyana Fitzpatrick</td>
+		                <td>Regional Director</td>
+		                <td>London</td>
+		                <td>19</td>
+		                <td>2010/03/17</td>
+		                <td>$385,750</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Michael Silva</td>
+		                <td>Marketing Designer</td>
+		                <td>London</td>
+		                <td>66</td>
+		                <td>2012/11/27</td>
+		                <td>$198,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Paul Byrd</td>
+		                <td>Chief Financial Officer (CFO)</td>
+		                <td>New York</td>
+		                <td>64</td>
+		                <td>2010/06/09</td>
+		                <td>$725,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Gloria Little</td>
+		                <td>Systems Administrator</td>
+		                <td>New York</td>
+		                <td>59</td>
+		                <td>2009/04/10</td>
+		                <td>$237,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Bradley Greer</td>
+		                <td>Software Engineer</td>
+		                <td>London</td>
+		                <td>41</td>
+		                <td>2012/10/13</td>
+		                <td>$132,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Dai Rios</td>
+		                <td>Personnel Lead</td>
+		                <td>Edinburgh</td>
+		                <td>35</td>
+		                <td>2012/09/26</td>
+		                <td>$217,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jenette Caldwell</td>
+		                <td>Development Lead</td>
+		                <td>New York</td>
+		                <td>30</td>
+		                <td>2011/09/03</td>
+		                <td>$345,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Yuri Berry</td>
+		                <td>Chief Marketing Officer (CMO)</td>
+		                <td>New York</td>
+		                <td>40</td>
+		                <td>2009/06/25</td>
+		                <td>$675,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Caesar Vance</td>
+		                <td>Pre-Sales Support</td>
+		                <td>New York</td>
+		                <td>21</td>
+		                <td>2011/12/12</td>
+		                <td>$106,450</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Doris Wilder</td>
+		                <td>Sales Assistant</td>
+		                <td>Sidney</td>
+		                <td>23</td>
+		                <td>2010/09/20</td>
+		                <td>$85,600</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Angelica Ramos</td>
+		                <td>Chief Executive Officer (CEO)</td>
+		                <td>London</td>
+		                <td>47</td>
+		                <td>2009/10/09</td>
+		                <td>$1,200,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Gavin Joyce</td>
+		                <td>Developer</td>
+		                <td>Edinburgh</td>
+		                <td>42</td>
+		                <td>2010/12/22</td>
+		                <td>$92,575</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jennifer Chang</td>
+		                <td>Regional Director</td>
+		                <td>Singapore</td>
+		                <td>28</td>
+		                <td>2010/11/14</td>
+		                <td>$357,650</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Brenden Wagner</td>
+		                <td>Software Engineer</td>
+		                <td>San Francisco</td>
+		                <td>28</td>
+		                <td>2011/06/07</td>
+		                <td>$206,850</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Fiona Green</td>
+		                <td>Chief Operating Officer (COO)</td>
+		                <td>San Francisco</td>
+		                <td>48</td>
+		                <td>2010/03/11</td>
+		                <td>$850,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Shou Itou</td>
+		                <td>Regional Marketing</td>
+		                <td>Tokyo</td>
+		                <td>20</td>
+		                <td>2011/08/14</td>
+		                <td>$163,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Michelle House</td>
+		                <td>Integration Specialist</td>
+		                <td>Sidney</td>
+		                <td>37</td>
+		                <td>2011/06/02</td>
+		                <td>$95,400</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Suki Burks</td>
+		                <td>Developer</td>
+		                <td>London</td>
+		                <td>53</td>
+		                <td>2009/10/22</td>
+		                <td>$114,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Prescott Bartlett</td>
+		                <td>Technical Author</td>
+		                <td>London</td>
+		                <td>27</td>
+		                <td>2011/05/07</td>
+		                <td>$145,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Gavin Cortez</td>
+		                <td>Team Leader</td>
+		                <td>San Francisco</td>
+		                <td>22</td>
+		                <td>2008/10/26</td>
+		                <td>$235,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Martena Mccray</td>
+		                <td>Post-Sales support</td>
+		                <td>Edinburgh</td>
+		                <td>46</td>
+		                <td>2011/03/09</td>
+		                <td>$324,050</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Unity Butler</td>
+		                <td>Marketing Designer</td>
+		                <td>San Francisco</td>
+		                <td>47</td>
+		                <td>2009/12/09</td>
+		                <td>$85,675</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Howard Hatfield</td>
+		                <td>Office Manager</td>
+		                <td>San Francisco</td>
+		                <td>51</td>
+		                <td>2008/12/16</td>
+		                <td>$164,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Hope Fuentes</td>
+		                <td>Secretary</td>
+		                <td>San Francisco</td>
+		                <td>41</td>
+		                <td>2010/02/12</td>
+		                <td>$109,850</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Vivian Harrell</td>
+		                <td>Financial Controller</td>
+		                <td>San Francisco</td>
+		                <td>62</td>
+		                <td>2009/02/14</td>
+		                <td>$452,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Timothy Mooney</td>
+		                <td>Office Manager</td>
+		                <td>London</td>
+		                <td>37</td>
+		                <td>2008/12/11</td>
+		                <td>$136,200</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jackson Bradshaw</td>
+		                <td>Director</td>
+		                <td>New York</td>
+		                <td>65</td>
+		                <td>2008/09/26</td>
+		                <td>$645,750</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Olivia Liang</td>
+		                <td>Support Engineer</td>
+		                <td>Singapore</td>
+		                <td>64</td>
+		                <td>2011/02/03</td>
+		                <td>$234,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Bruno Nash</td>
+		                <td>Software Engineer</td>
+		                <td>London</td>
+		                <td>38</td>
+		                <td>2011/05/03</td>
+		                <td>$163,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Sakura Yamamoto</td>
+		                <td>Support Engineer</td>
+		                <td>Tokyo</td>
+		                <td>37</td>
+		                <td>2009/08/19</td>
+		                <td>$139,575</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Thor Walton</td>
+		                <td>Developer</td>
+		                <td>New York</td>
+		                <td>61</td>
+		                <td>2013/08/11</td>
+		                <td>$98,540</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Finn Camacho</td>
+		                <td>Support Engineer</td>
+		                <td>San Francisco</td>
+		                <td>47</td>
+		                <td>2009/07/07</td>
+		                <td>$87,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Serge Baldwin</td>
+		                <td>Data Coordinator</td>
+		                <td>Singapore</td>
+		                <td>64</td>
+		                <td>2012/04/09</td>
+		                <td>$138,575</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Zenaida Frank</td>
+		                <td>Software Engineer</td>
+		                <td>New York</td>
+		                <td>63</td>
+		                <td>2010/01/04</td>
+		                <td>$125,250</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Zorita Serrano</td>
+		                <td>Software Engineer</td>
+		                <td>San Francisco</td>
+		                <td>56</td>
+		                <td>2012/06/01</td>
+		                <td>$115,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jennifer Acosta</td>
+		                <td>Junior Javascript Developer</td>
+		                <td>Edinburgh</td>
+		                <td>43</td>
+		                <td>2013/02/01</td>
+		                <td>$75,650</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Cara Stevens</td>
+		                <td>Sales Assistant</td>
+		                <td>New York</td>
+		                <td>46</td>
+		                <td>2011/12/06</td>
+		                <td>$145,600</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Hermione Butler</td>
+		                <td>Regional Director</td>
+		                <td>London</td>
+		                <td>47</td>
+		                <td>2011/03/21</td>
+		                <td>$356,250</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Lael Greer</td>
+		                <td>Systems Administrator</td>
+		                <td>London</td>
+		                <td>21</td>
+		                <td>2009/02/27</td>
+		                <td>$103,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Jonas Alexander</td>
+		                <td>Developer</td>
+		                <td>San Francisco</td>
+		                <td>30</td>
+		                <td>2010/07/14</td>
+		                <td>$86,500</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Shad Decker</td>
+		                <td>Regional Director</td>
+		                <td>Edinburgh</td>
+		                <td>51</td>
+		                <td>2008/11/13</td>
+		                <td>$183,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Michael Bruce</td>
+		                <td>Javascript Developer</td>
+		                <td>Singapore</td>
+		                <td>29</td>
+		                <td>2011/06/27</td>
+		                <td>$183,000</td><td>$320,800</td>
+		            </tr>
+		            <tr style="display: none;">
+		                <td>Donna Snider</td>
+		                <td>Customer Support</td>
+		                <td>New York</td>
+		                <td>27</td>
+		                <td>2011/01/25</td>
+		                <td>$112,000</td><td>$320,800</td>
+		            </tr>
+		        </tbody>
+		    </table>
+	    </div>
     </div>
 </div>
 
 <!-- Current d3 version is 3.4.1 -->
 <script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/d3.min.js" charset="utf-8"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/nv.d3.min.js" charset="utf-8"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}catalystdashboard/jquery.simplePagination.js" charset="utf-8"></script>
 <script type="text/javascript">
     var CHART_DATA = {{chart_data | safe}};
     var AMOUNT_COST = {{amount_cost | safe}};
     var COST_DETAILS = {{cost_details | safe}};
+    var MONTHS = {{x_axis_line_chart | safe}};
+
+    function showMontlyCost(month_index){
+        $("#monthly_title").html("Monthly Cost Break Down (<b>" + MONTHS[month_index] + "</b>)");
+    }
 
     function draw_pie(where, source){
-        nv.addGraph(function() {
-            var chart = nv.models.pieChart()
-                .x(function(d) { return d.key })
-                .y(function(d) { return d.value })
-                .showLabels(true)
-                .labelType("percent")
-                .labelThreshold(.05)
-                .donut(true)
-                .donutRatio(0.35);
-
-            chart.tooltipContent(function(k, v, graph) {
-                return '<h3>' + k + '</h3>' + '<span style=\'padding:8px\'>$' + v + '</span>'
-            });
-
-            d3.select(where)
-                .datum(source)
-                .transition().duration(1200)
-                .call(chart);
-
-            nv.utils.windowResize(chart.update);
-
-            return chart;
-        });
+        var h = 500;
+		var r = h/2;
+		var arc = d3.svg.arc().outerRadius(r) /2 ;
+		nv.addGraph(function() {
+		    var chart = nv.models.pieChart()
+		        .x(function(d) { return d.key })
+		        .y(function(d) { return d.value })
+		        .margin({left: 0, right: 60})
+		        .showLabels(true)
+		        .labelType("percent")
+		        .labelThreshold(.05)
+		        .donut(true).donutRatio(0.35);
+		    d3.select("#pie_chart svg")
+		        .datum(CHART_DATA['pie'])
+		        .transition().duration(1200)
+		        .call(chart);
+		    return chart;
+		});
     }
 
     function draw_line(where, source){
         nv.addGraph(function() {
-            var months = {{x_axis_line_chart | safe}};
+            d3.select(source).remove();
             var chart = nv.models.lineChart()
-                .margin({left: 75})
-                .size(70);
+                .margin({left: 75, right: 50})
+                .size(100);
 
             chart.tooltipContent(function(key, x, y, graph) {
                 return '<h3>' + key + '</h3>' + '<span style=\'padding:8px\'>$' + y + ' at ' + x + '</span>'
@@ -122,7 +581,7 @@
 
             chart.xAxis.axisLabel("Cost per Month")
                 .tickValues([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-                .tickFormat(function(m){return months[m]});
+                .tickFormat(function(m){return MONTHS[m]});
 
             chart.yAxis
                 .axisLabel("Cost (NZD) excl. GST")
@@ -130,7 +589,41 @@
 
             d3.select(where)
                 .datum(source)
-                .call(chart);
+                .transition()
+                .duration(500)
+                .call(chart)
+                .each("end", function(){
+                    var svg = d3.select(this);
+                    var data = CHART_DATA['line'];
+		            var temp = svg.select('.nv-interactive').selectAll("circle")
+			            .data(data[0].values.filter(function (d) {
+			            return d.y >= 0;
+			        }))
+			            .enter().append("circle")
+			            .attr("class", "mycircle")
+			            .style("fill", "#0a71af")
+			            .attr("r", 5)
+			            .attr("cx", function(d) {
+			            return chart.xAxis.scale()(d.x);
+			        })
+			            .attr("cy", function(d) {
+			            return chart.yAxis.scale()(d.y);
+			        })
+			            .on("click", function(d) {
+			                showMontlyCost(d["x"]);
+			        })
+			            .on("mouseover", function(d) {
+                            svg.style("cursor", "pointer"); /*semicolon here*/
+                    })
+                        .on("mouseout", function(d) {
+                            svg.style("cursor", "default"); /*and there*/
+                    });
+			
+			        svg.select('#nv-point-clips').selectAll("circle")
+			            .on("click", function (d) {
+			            alert('on click called.' + chart.lines.x());
+			        });
+                });
 
             nv.utils.windowResize(chart.update);
 
@@ -138,14 +631,27 @@
         });
     }
 
+
     $(document).ready(function(){
+        $("#example").simplePagination({
+            perPage: 10,
+            previousButtonClass: "btn btn-default",
+            nextButtonClass: "btn btn-default"
+        });
+
         draw_pie("#pie_chart .pie", function(){
             return CHART_DATA['pie'];
-        })
+        });
 
         draw_line("#line_chart .line", function(){
             return CHART_DATA['line'];
-        })
+        });
+
+        $(window).resize(function(){
+	        draw_line("#line_chart .line", function(){
+	            return CHART_DATA['line'];
+	        });
+        });
 
         $('#id_start').attr('disabled', true);
         $('#billing tbody tr').each(function(){
@@ -154,7 +660,7 @@
         $('#billing tfoot td').attr('colspan', 2);
         $('#billing tfoot>tr').append('<td><span class="total">$'+AMOUNT_COST+'</span></td>');
 
-        var link_mapping = {"Compute": "/instances/",
+        var link_mapping = {"Virtual Machine": "/instances/",
                             "Image": "/images/",
                             "Network": "/networks/",
                             "Router": "/routers/",
@@ -177,12 +683,17 @@
                     if (resource_type == 'Network'){
                         link += '/detail';
                     }
+                    if (resource_type == 'Object Storage'){
+                        link = "/project/containers/container/" + res_cost_details[i]['resource_name'];
+                    }
 
-                    $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource']+'</td><td>'+res_cost_details[i]['volume']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
+                    $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource_name']+'</td><td>'+res_cost_details[i]['region']+'</td><td>'+res_cost_details[i]['quantity']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
                 }
             }
           })
         $('#service_details').hide();
+        // FIXME(flwang): Need a better way to fix this
+        $('li.active').html('Usage Costs');
     });
 
 </script>

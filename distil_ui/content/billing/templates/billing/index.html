@@ -18,7 +18,7 @@
 
 {% block main %}
 
-<p>Disclaimer: This is an estimate for your usage within the current region, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
+<p>Disclaimer: This is an estimate for your usage within all regions, not your final invoice. It includes the free router and network discount. All costs are in New Zealand dollars and are exclusive of GST.</p>
 
 <div class="row-fluid">
     <div class="col-md-4">
@@ -60,7 +60,8 @@
            <tr class="tablesorter-headerRow">
             <th tabindex="0" data-column="0" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource ID</div></th>
             <th tabindex="0" data-column="1" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Resource Name</div></th>
-            <th tabindex="0" data-column="2" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Volume</div></th>
+            <th tabindex="0" data-column="1" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Region</div></th>
+            <th tabindex="0" data-column="2" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Quantity</div></th>
             <th tabindex="0" data-column="3" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Unit</div></th>
             <th tabindex="0" data-column="4" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Rate</div></th>
             <th tabindex="0" data-column="5" class="sortable normal_column tablesorter-header"><div class="tablesorter-header-inner">Cost</div></th>
@@ -178,7 +179,7 @@
                         link += '/detail';
                     }
 
-                    $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource']+'</td><td>'+res_cost_details[i]['volume']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
+                    $('#service_details tbody').append('<tr class='+row_class+'><td><a href="' + link +'">' + res_cost_details[i]['resource_id'] + '</a></td><td>'+res_cost_details[i]['resource_name']+'</td><td>'+res_cost_details[i]['region']+'</td><td>'+res_cost_details[i]['quantity']+'</td><td>'+res_cost_details[i]['unit']+'</td><td>'+res_cost_details[i]['rate']+'</td><td>'+res_cost_details[i]['cost']+'</td></tr>');
                 }
             }
           })

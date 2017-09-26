@@ -155,7 +155,9 @@ def _wash_details(current_details):
     # NOTE(flwang): Currently, the breakdown will accumulate all the object
     # storage cost, so we need to deduce the duplicated part.
     object_cost = current_details["breakdown"].get(OBJECTSTORAGE_CATEGORY, 0)
-    dup_object_cost = (region_count - 1) * (object_cost / region_count)
+
+    dup_object_cost = (0 if region_count == 0 else
+                       (region_count - 1) * (object_cost / region_count))
     current_details["total_cost"] = (current_details["total_cost"] -
                                      dup_object_cost)
     return current_details

@@ -1,0 +1,9 @@
+Code-Review+2: Adrian Turjak <adriant@catalyst.net.nz>
+Code-Review+2: Feilong Wang <flwang@catalyst.net.nz>
+Workflow+1: Feilong Wang <flwang@catalyst.net.nz>
+Verified+2: Jenkins
+Submitted-by: Jenkins
+Submitted-at: Wed, 27 Sep 2017 00:10:36 +0000
+Reviewed-on: https://review.openstack.org/507333
+Project: openstack/distil-ui
+Branch: refs/heads/master

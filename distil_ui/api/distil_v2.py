@@ -198,7 +198,7 @@ def _parse_quotation(quotation, merged_quotations, region=None):
     return parsed
 
 
-def _get_quotations(request):
+def get_quotation(request):
     LOG.debug("Start to get quotations from all regions.")
     today_date = datetime.date.today().strftime("%Y-%m-%d")
     regions = request.user.available_services_regions
@@ -217,6 +217,11 @@ def _get_quotations(request):
     LOG.debug("Got quotations from all regions successfully.")
     return merged_quotations
 
+
+def get_invoices(request, start, end):
+    distil_client = distil_client or distilclient(request)
+    return distil_client.invoices.list(start, end,
+                                       detailed=True)['invoices']
 
 def get_cost(request, distil_client=None):
     """Get cost for the 1atest 12 months include current month
@@ -272,7 +277,7 @@ def get_cost(request, distil_client=None):
     # 2. Process quotations from all regions
     # NOTE(flwang): The quotations from all regions is always the last one of
     # the cost list.
-    cost[-1] = _get_quotations(request)
+    cost[-1] = get_quotation(request)
 
     return cost
 

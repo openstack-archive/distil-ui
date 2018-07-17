@@ -189,6 +189,7 @@
         var link_mapping = {"c1": "/project/instances/",
                             "b1": "/project/volumes/"}
         $('#month_details tbody').empty();
+        if (MONTH_DETAILS.length == 0) {return}
         month_detail = MONTH_DETAILS[monthIndex]
         for(i = 0; i < month_detail.length; i++) {
             var resource_id = ""

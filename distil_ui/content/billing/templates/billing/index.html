@@ -189,30 +189,31 @@
         var link_mapping = {"c1": "/project/instances/",
                             "b1": "/project/volumes/"}
         $('#month_details tbody').empty();
+        if (MONTH_DETAILS.length == 0) {return}
         month_detail = MONTH_DETAILS[monthIndex]
         for(i = 0; i < month_detail.length; i++) {
             var resource_id = ""
             var resource_url = "#";
             if (month_detail[i]['resource_id'] != null && month_detail[i]['resource_id'] != "") {
                 resource_id = "(" + month_detail[i]['resource_id']+")"
-	            var resource_type = month_detail[i]["product"].split(".")[1];
-	            var product_name = month_detail[i]["product"].split(".")[2];
-	            if (resource_type in link_mapping){
-	                resource_url = link_mapping[resource_type] + month_detail[i]['resource_id'];
-	            }
-	            if (resource_type == 'n1'){
-	                if (product_name == 'network'){
-	                    resource_url = '/project/networks/'+ month_detail[i]['resource_id'] +'/detail';
-	                }
-	                if (product_name == 'router'){
-	                    resource_url = '/project/routers/'+ month_detail[i]['resource_id'];
-	                }
-	                if (product_name == 'vpn'){
-	                    resource_url = '/project/vpn/vpnservice/'+ month_detail[i]['resource_id'];
-	                }
-	            }
+                var resource_type = month_detail[i]["product"].split(".")[1];
+                var product_name = month_detail[i]["product"].split(".")[2];
+                if (resource_type in link_mapping){
+                    resource_url = link_mapping[resource_type] + month_detail[i]['resource_id'];
+                }
+                if (resource_type == 'n1'){
+                    if (product_name == 'network'){
+                        resource_url = '/project/networks/'+ month_detail[i]['resource_id'] +'/detail';
+                    }
+                    if (product_name == 'router'){
+                        resource_url = '/project/routers/'+ month_detail[i]['resource_id'];
+                    }
+                    if (product_name == 'vpn'){
+                        resource_url = '/project/vpn/vpnservice/'+ month_detail[i]['resource_id'];
+                    }
+                }
             }
-            
+
             resource = resource_id == ""? month_detail[i]['resource_name']+resource_id : "<a href="+ resource_url +">" + month_detail[i]['resource_name'] + resource_id + "</a>"
             $('#month_details tbody').append('<tr><td>' + month_detail[i]['product'] + '</td><td>' + resource +'</td><td>'+month_detail[i]['quantity']+'</td><td>'+month_detail[i]['unit']+'</td><td>'+month_detail[i]['rate']+'</td><td>$'+month_detail[i]['cost']+'</td></tr>');
         }

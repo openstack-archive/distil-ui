@@ -18,6 +18,7 @@ import logging
 import six
 
 from django.conf import settings
+from django.utils.html import escape
 
 from openstack_dashboard.api import base
 
@@ -175,6 +176,8 @@ def _parse_invoice(invoice):
         for product in services["breakdown"]:
             for order_line in services["breakdown"][product]:
                 order_line["product"] = product
+                order_line["resource_name"] = escape(
+                    order_line["resource_name"])
                 details.append(order_line)
     LOG.debug("Got quotations successfully.")
     return parsed
@@ -193,6 +196,8 @@ def _parse_quotation(quotation, merged_quotations, region=None):
         for product in services["breakdown"]:
             for order_line in services["breakdown"][product]:
                 order_line["product"] = product
+                order_line["resource_name"] = escape(
+                    order_line["resource_name"])
                 details.append(order_line)
 
     return parsed

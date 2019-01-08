@@ -109,6 +109,7 @@ def _wash_details(current_details):
         else:
             washed_details.append(u)
 
+    total_free_router_network_cost = 0
     free_network_hours_left = free_hours
     for region, hours in six.iteritems(network_hours):
         free_network_hours = (hours if hours <= free_network_hours_left
@@ -116,13 +117,14 @@ def _wash_details(current_details):
         if not free_network_hours:
             break
         line_name = 'Free Network Tier in %s' % region
+        cost = round(free_network_hours * -rate_network, 2)
+        total_free_router_network_cost += cost
         washed_details.append({'product': region + '.n1.network',
                                'resource_name': line_name,
                                'quantity': free_network_hours,
                                'resource_id': '',
                                'unit': 'hour', 'rate': -rate_network,
-                               'cost': round(free_network_hours *
-                                             -rate_network, 2)})
+                               'cost': cost})
         free_network_hours_left -= free_network_hours
 
     free_router_hours_left = free_hours
@@ -132,13 +134,14 @@ def _wash_details(current_details):
         if not free_router_hours:
             break
         line_name = 'Free Router Tier in %s' % region
+        cost = round(free_router_hours * -rate_router, 2)
+        total_free_router_network_cost += cost
         washed_details.append({'product': region + '.n1.router',
                                'resource_name': line_name,
                                'quantity': free_router_hours,
                                'resource_id': '',
                                'unit': 'hour', 'rate': -rate_router,
-                               'cost': round(free_router_hours *
-                                             -rate_router, 2)})
+                               'cost': cost})
         free_router_hours_left -= free_router_hours
 
     region_count = 0
@@ -161,6 +164,13 @@ def _wash_details(current_details):
                        (region_count - 1) * (object_cost / region_count))
     current_details["total_cost"] = (current_details["total_cost"] -
                                      dup_object_cost)
+
+    # NOTE(flwang): Apply the free router and network to reflect correct cost.
+    # The total_free_router_network_cost is negative value.
+    current_details["total_cost"] += total_free_router_network_cost
+    current_details["total_cost"] = (current_details["total_cost"] if
+                                     current_details["total_cost"] > 0 else 0)
+
     return current_details
 
 

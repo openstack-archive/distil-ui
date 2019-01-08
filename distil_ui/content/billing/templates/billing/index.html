@@ -256,7 +256,7 @@
         } else {
              $("#credits_div").show();
             for(i=0;i<CREDITS["credits"].length;i++){
-                $("#credits_list").append('<li><i class="fa-li fa fa-credit-card"></i> Balance of ' + CREDITS["credits"][i].type + ' is $' + CREDITS["credits"][i].balance + ' will expired at ' + CREDITS["credits"][i].expiry_date + '</li>');
+                $("#credits_list").append('<li><i class="fa-li fa fa-credit-card"></i> Balance of ' + CREDITS["credits"][i].type + ' is $' + CREDITS["credits"][i].balance + '. This will expire on ' + CREDITS["credits"][i].expiry_date + '</li>');
             }
         }
     });
